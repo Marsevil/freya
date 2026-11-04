@@ -2762,6 +2762,7 @@ dependencies = [
  "freya-core",
  "freya-winit",
  "jni 0.22.4",
+ "log",
  "tracing",
  "winit",
 ]

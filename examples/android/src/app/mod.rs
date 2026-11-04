@@ -1,11 +1,8 @@
 mod routes;
 
 use freya::{
-    animation::*,
-    icons::lucide,
-    material_design::FloatingTabRippleExt,
-    prelude::*,
-    router::*,
+    android::hooks::use_android_window_insets, animation::*, icons::lucide,
+    material_design::FloatingTabRippleExt, prelude::*, router::*,
 };
 use routes::*;
 
@@ -58,32 +55,45 @@ impl Component for AppTopBar {
     fn render(&self) -> impl IntoElement {
         use_init_theme(light_theme);
 
-        rect().native_router().child(AnimatedRouter::<Route>::new(
-            rect()
-                .content(Content::flex())
-                .theme_background()
-                .theme_color()
-                .child(
-                    rect()
-                        .width(Size::fill())
-                        .height(Size::flex(1.))
-                        .padding((40., 0., 8., 0.))
-                        .child(AnimatedOutlet),
-                )
-                .child(
-                    rect()
-                        .horizontal()
-                        .width(Size::fill())
-                        .main_align(Alignment::center())
-                        .padding((4., 4., 20., 4.))
-                        .spacing(4.)
-                        .child(tab(Route::ScrollView, "Scroll", lucide::scroll_text))
-                        .child(tab(Route::Widgets, "Widgets", lucide::sliders_horizontal))
-                        .child(tab(Route::Portal, "Portal", lucide::layers))
-                        .child(tab(Route::Editor, "Editor", lucide::code))
-                        .child(tab(Route::Markdown, "Markdown", lucide::notebook_text)),
-                ),
-        ))
+        let android_state = use_android_window_insets();
+
+        let app_padding = use_memo(move || {
+            let android_state = android_state.read();
+            let top = android_state.status_bar_height;
+            let bottom = android_state.ime_height;
+
+            Gaps::new(top, 0f32, bottom, 0f32)
+        });
+
+        rect()
+            .padding(app_padding())
+            .native_router()
+            .child(AnimatedRouter::<Route>::new(
+                rect()
+                    .content(Content::flex())
+                    .theme_background()
+                    .theme_color()
+                    .child(
+                        rect()
+                            .width(Size::fill())
+                            .height(Size::flex(1.))
+                            .padding((40., 0., 8., 0.))
+                            .child(AnimatedOutlet),
+                    )
+                    .child(
+                        rect()
+                            .horizontal()
+                            .width(Size::fill())
+                            .main_align(Alignment::center())
+                            .padding((4., 4., 20., 4.))
+                            .spacing(4.)
+                            .child(tab(Route::ScrollView, "Scroll", lucide::scroll_text))
+                            .child(tab(Route::Widgets, "Widgets", lucide::sliders_horizontal))
+                            .child(tab(Route::Portal, "Portal", lucide::layers))
+                            .child(tab(Route::Editor, "Editor", lucide::code))
+                            .child(tab(Route::Markdown, "Markdown", lucide::notebook_text)),
+                    ),
+            ))
     }
 }
 

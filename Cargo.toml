@@ -113,6 +113,7 @@ mundy = { version = "0.2.3", default-features = false, features = [
 # core
 generational-box = "0.7"
 tracing = "0.1.41"
+log = "0.4"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 rustc-hash = "2.1.1"
 bitflags = "2.9.3"
